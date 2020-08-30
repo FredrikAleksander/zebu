@@ -1,0 +1,9 @@
+incremental_db/
+db/
+output_files/
+simulation/
+.vscode/
+*.bak
+*.vvp
+*.vcd
+*.log

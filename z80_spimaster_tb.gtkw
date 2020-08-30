@@ -1,0 +1,37 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sun Aug 30 18:55:18 2020
+[*]
+[dumpfile] "z80_spimaster_tb.vcd"
+[dumpfile_mtime] "Sun Aug 30 18:55:00 2020"
+[dumpfile_size] 9632
+[savefile] "z80_spimaster_tb.gtkw"
+[timestart] 0
+[size] 1920 1057
+[pos] -1 -1
+*-17.000000 120000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 197
+[signals_width] 304
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@820
+z80_spimaster_tb.cycle[15:0]
+@28
+z80_spimaster_tb.reset
+z80_spimaster_tb.clk
+z80_spimaster_tb.cs_n
+z80_spimaster_tb.wr_n
+@22
+z80_spimaster_tb.data[7:0]
+z80_spimaster_tb.data_output[7:0]
+@200
+-
+-SPI
+@100000028
+z80_spimaster_tb.ssel[3:0]
+@28
+z80_spimaster_tb.sck
+z80_spimaster_tb.mosi
+z80_spimaster_tb.miso
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,34 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sun Aug 30 17:11:06 2020
+[*]
+[dumpfile] "z80_mmu_tb.vcd"
+[dumpfile_mtime] "Sun Aug 30 17:10:35 2020"
+[dumpfile_size] 1759
+[savefile] "z80_mmu_tb.gtkw"
+[timestart] 0
+[size] 1920 1057
+[pos] -1 -1
+*-17.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] z80_mmu_tb.
+[sst_width] 197
+[signals_width] 158
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@820
+z80_mmu_tb.cycle[15:0]
+@28
+z80_mmu_tb.reset
+z80_mmu_tb.clk
+z80_mmu_tb.cs_n
+z80_mmu_tb.wr_n
+z80_mmu_tb.addr[1:0]
+@22
+z80_mmu_tb.data[7:0]
+@28
+z80_mmu_tb.page[1:0]
+@22
+z80_mmu_tb.block[7:0]
+z80_mmu_tb.data_output[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

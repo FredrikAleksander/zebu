@@ -1,0 +1,33 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sun Aug 30 17:19:30 2020
+[*]
+[dumpfile] "z80_waitstate_generator_tb.vcd"
+[dumpfile_mtime] "Sun Aug 30 17:19:12 2020"
+[dumpfile_size] 1985
+[savefile] "z80_waitstate_generator_tb.gtkw"
+[timestart] 0
+[size] 1920 1057
+[pos] -1 -1
+*-17.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 197
+[signals_width] 280
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@820
+z80_waitstate_generator_tb.cycle[15:0]
+@28
+z80_waitstate_generator_tb.reset
+z80_waitstate_generator_tb.clk
+z80_waitstate_generator_tb.cs_n
+z80_waitstate_generator_tb.wr_n
+z80_waitstate_generator_tb.iorq_n
+@22
+z80_waitstate_generator_tb.addr[7:0]
+z80_waitstate_generator_tb.data[7:0]
+@23
+z80_waitstate_generator_tb.data_output[7:0]
+@28
+z80_waitstate_generator_tb.r_wait
+[pattern_trace] 1
+[pattern_trace] 0
