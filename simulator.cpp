@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 	}
 
 
-	tb->reset(2);
+	tb->reset(100);
 
 	// Tick the clock until we are done
 	while(!Verilated::gotFinish()) {

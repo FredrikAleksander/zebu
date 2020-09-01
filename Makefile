@@ -34,7 +34,7 @@ z80_waitstate_generator_tb: z80_waitstate_generator_tb.vcd z80_waitstate_generat
 	$(GTKWAVE) z80_waitstate_generator_tb.gtkw
 
 obj_dir/Vsimulator.cpp: $(SOURCES)
-	verilator $(VFLAGS) --top-module simulator -Icpu/cpu/alu -Icpu/cpu/bus -Icpu/cpu/control -Icpu/cpu/registers -Icpu/cpu/toplevel -Wno-fatal -cc simulator.v
+	verilator $(VFLAGS) --top-module simulator -Itv80/rtl/core -Wno-fatal -cc simulator.v
 
 obj_dir/Vsimulator__ALL.a: obj_dir/Vsimulator.cpp obj_dir/Vsimulator.h
 	cd obj_dir/ && $(MAKE) -f Vsimulator.mk

@@ -1,4 +1,4 @@
-`include "z80_top_direct_n.v"
+`include "tv80s.v"
 `include "z80_bus_controller_core.v"
 `include "sram.v"
 
@@ -45,8 +45,6 @@ module simulator(
     wire miso = 1'b1;
     wire [3:0] ssel;
 
-    wire [7:0] cpu_data;
-
     wire [13:0] cpu_addr;
     wire [1:0]  cpu_page;
     wire [7:0]  cpu_page_block;
@@ -55,26 +53,24 @@ module simulator(
     wire [7:0] master_data_i;
     wire [7:0] master_data_o;
 
-    assign cpu_data = master_data_i;
-    assign master_data_o = cpu_data;
-
-    z80_top_direct_n cpu(
-        .CLK(sysclk),
-        .nRESET(reset_n),
-        .nM1(m1_n),
-        .nNMI(nmi_n),
-        .nMREQ(mreq_n),
-        .nIORQ(iorq_n),
-        .nRD(rd_n),
-        .nWR(wr_n),
-        .nRFSH(rfsh_n),
-        .nHALT(halt_n),
-        .nBUSACK(busack_n),
-        .nWAIT(wait_n),
-        .nINT(int_n),
-        .nBUSRQ(busrq_n),
-        .D(cpu_data),
-        .A({cpu_page, cpu_addr})
+    tv80s cpu(
+        .clk(sysclk),
+        .reset_n(reset_n),
+        .m1_n(m1_n),
+        .wait_n(wait_n),
+        .int_n(int_n),
+        .nmi_n(nmi_n),
+        .busrq_n(busrq_n),
+        .mreq_n(mreq_n),
+        .iorq_n(iorq_n),
+        .rd_n(rd_n),
+        .wr_n(wr_n),
+        .rfsh_n(rfsh_n),
+        .halt_n(halt_n),
+        .busak_n(busack_n),
+        .A({cpu_page, cpu_addr}),
+        .di(master_data_i),
+        .dout(master_data_o)
     );
 
     wire [7:0] controller_data;
@@ -137,5 +133,5 @@ module simulator(
     );
     
     assign master_data_i = controller_data_en ?
-        controller_data : (~(ram_cs_n | rd_n) ? ram_data_o : (~(rom_cs_n | rd_n) ? rom_data_o : 8'bXXXXXXXX));
+        controller_data : (~(ram_cs_n | rd_n) ? ram_data_o : (~(rom_cs_n | rd_n) ? rom_data_o : 8'bZZZZZZZZ));
 endmodule

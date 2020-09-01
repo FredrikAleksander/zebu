@@ -1,3 +1,3 @@
-[submodule "cpu"]
-	path = cpu
-	url = https://github.com/FredrikAleksander/a-z80.git
+[submodule "tv80"]
+	path = tv80
+	url = https://github.com/hutch31/tv80.git
