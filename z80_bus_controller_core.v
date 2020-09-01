@@ -47,7 +47,7 @@ module z80_bus_controller_core (
     output [3:0]  o_ssel
 );
     // Clock divider
-    reg clk2x = 1'b0;
+    reg clk2x = 1'b1;
     always @(posedge i_mclk)
         clk2x <= ~clk2x;
 
@@ -87,7 +87,7 @@ module z80_bus_controller_core (
 	 wire [7:0] data_o = (mmu_sel_n ? (spi_sel_n ?  8'b00000000 : spi_data_o) : mmu_data_o);
 	 
 	 assign o_data = data_o;
-	 assign o_data_en = (iorq_n | i_rd_n | ~i_addr[7]);
+	 assign o_data_en = ~(iorq_n | i_rd_n | ~i_addr[7]);
 
     //assign io_data = (wsg_cs_n | i_rd_n) ? ((mmu_cs_n | i_rd_n) ? ((spi_cs_n | i_rd_n) ? 8'bZZZZZZZZ : spi_data_o) : mmu_data_o) : wsg_data_o;
     wire [7:0] uaddr = i_busack_n ? mmu_uaddr_o : i_uaddr;
