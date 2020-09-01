@@ -32,7 +32,7 @@ module serclk_generator(
         assign clkout=speed_select[3] ? divider[speed_select[2:0]] : clk;
 
         initial begin
-                divider <= 0;
+                divider = 0;
         end
 
         // Increment clock divider with each Z80 clock cycle.                   

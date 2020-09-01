@@ -1,11 +1,9 @@
 `ifndef Z80_BUS_CONTROLLER_V
 `define Z80_BUS_CONTROLLER_V 1
 
-`include "z80_mmu.v"
-`include "z80_spimaster.v"
-`include "z80_waitstate_generator.v"
+`include "z80_bus_controller_core.v"
 
-module z80_bus_controller(
+module z80_bus_controller (
     input         i_reset_n,
 
     input         i_mclk,
@@ -43,115 +41,52 @@ module z80_bus_controller(
     input         i_miso,
     output [3:0]  o_ssel
 );
-    // Clock divider
-    reg clk2x = 1'b0;
-    always @(posedge i_mclk)
-        clk2x <= ~clk2x;
 
-    wire sys_clk = clk2x;
-    wire inv_clk = ~sys_clk;
-    assign o_clk = sys_clk;
+    wire [7:0] data_out;
+    wire [7:0] uaddr_out;
+    wire data_out_en;
+    wire wait_n;
+    wire int_n;
 
-    // I/O Decoding
-    wire iorq_n = i_iorq_n | ~i_m1_n;
+    assign io_data = data_out_en ? data_out : 8'bZZZZZZZZ;
+    assign io_uaddr = i_busack_n ? uaddr_out : 8'bZZZZZZZZ;
+    assign o_wait_n = wait_n ? 1'bZ : 1'b0;
+    assign o_int_n = int_n ? 1'bZ : 1'b0;
 
-    wire iorq1_sel_n = i_addr[7:5] != 3'b000; // I/O Address: 0x00 (Device #1)
-    wire iorq2_sel_n = i_addr[7:5] != 3'b001; // I/O Address: 0x20 (Device #2)
-    wire iorq3_sel_n = i_addr[7:5] != 3'b010; // I/O Address: 0x40 (Device #3)
-    wire iorq4_sel_n = i_addr[7:5] != 3'b011; // I/O Address: 0x60 (Device #4)
-
-    wire uart_sel_n = i_addr[7:5] != 3'b100;  // I/O Address: 0x80 (UART)
-    wire spi_sel_n  = i_addr[7:5] != 3'b101;  // I/O Address: 0xA0 (SPI Master)
-    wire wsg_sel_n  = i_addr[7:5] != 3'b110;  // I/O Address: 0xC0 (Wait-State Generator)
-    wire mmu_sel_n  = i_addr[7:5] != 3'b111;  // I/O Address: 0xE0 (Memory Management Unit)
-
-    assign o_iorq1_n   = iorq1_sel_n | iorq_n;
-    assign o_iorq2_n   = iorq2_sel_n | iorq_n;
-    assign o_iorq3_n   = iorq3_sel_n | iorq_n;
-    assign o_iorq4_n   = iorq4_sel_n | iorq_n;
-    assign o_uart_cs_n = uart_sel_n  | iorq_n;
-
-    wire spi_cs_n = spi_sel_n | iorq_n;
-    wire wsg_cs_n = wsg_sel_n | iorq_n;
-    wire mmu_cs_n = mmu_sel_n | iorq_n;
-
-    // Data multiplexing
-    wire [7:0] wsg_data_o;
-    wire [7:0] spi_data_o;
-    wire [7:0] mmu_data_o;
-    wire [7:0] mmu_uaddr_o;
-    wire [7:0] uaddr_i;
-
-    assign io_data = (wsg_cs_n | i_rd_n) ? ((mmu_cs_n | i_rd_n) ? ((spi_cs_n | i_rd_n) ? 8'bZZZZZZZZ : spi_data_o) : mmu_data_o) : wsg_data_o;
-
-    // When the CPU is not the busmaster, tristate the upper address bits from the MMU
-    assign io_uaddr = i_busack_n ? mmu_uaddr_o : 8'bZZZZZZZZ;
-
-    wire reset = ~i_reset_n;
-    assign o_reset = reset;
-
-    // MMU
-    z80_mmu mmu(
-        .i_reset(reset),
-        .i_clk(inv_clk),
-        .i_cs_n(mmu_cs_n),
+    z80_bus_controller_core core(
+        .i_reset_n(i_reset_n),
+        .i_mclk(i_mclk),
+        .o_clk(o_clk),
+        .i_m1_n(i_m1_n),
+        .i_addr(i_addr),
+        .i_iorq_n(i_iorq_n),
+        .i_memrq_n(i_memrq_n),
+        .i_rd_n(i_rd_n),
         .i_wr_n(i_wr_n),
-        .i_addr(i_addr[1:0]),
         .i_data(io_data),
-        .o_data(mmu_data_o),
+        .o_data(data_out),
+        .o_data_en(data_out_en),
         .i_page(i_page),
-        .o_block(mmu_uaddr_o)
+        .i_uaddr(io_uaddr),
+        .o_uaddr(uaddr_out),
+        .i_uart_inta(i_uart_inta),
+        .i_uart_intb(i_uart_intb),
+        .o_int_n(int_n),
+        .i_busack_n(i_busack_n),
+        .o_reset(o_reset),
+        .o_wait_n(wait_n),
+        .o_ram_cs_n(o_ram_cs_n),
+        .o_rom_cs_n(o_rom_cs_n),
+        .o_uart_cs_n(o_uart_cs_n),
+        .o_iorq1_n(o_iorq1_n),
+        .o_iorq2_n(o_iorq2_n),
+        .o_iorq3_n(o_iorq3_n),
+        .o_iorq4_n(o_iorq4_n),
+
+        .o_sck(o_sck),
+        .o_mosi(o_mosi),
+        .i_miso(i_miso),
+        .o_ssel(o_ssel)
     );
-
-    // SPI Master. Based on the zxspi project (http://spectrum.alioth.net/doc/index.php/ZX_SPI)
-    z80_spimaster spimaster(
-        .reset(reset),
-        .clk(inv_clk),
-        .rd_L(i_rd_n),
-        .wr_L(i_wr_n),
-        .iorq_L(spi_cs_n),
-        .a(i_addr[0]),
-        .d(io_data),
-        .d_out(spi_data_o),
-        .spi_clk(o_sck),
-        .mosi(o_mosi),
-        .miso(i_miso),
-        .spi_cs(o_ssel)
-    );
-
-    // Memory Decoding. Top 512KB of address space is builtin ROM, the 512KB below that is builtin RAM.
-    // The remaining lower 3MB of the address space can be used with a memory expansion card.
-    wire ram_sel_n = io_uaddr[7:5] != 3'b110;
-    wire rom_sel_n = io_uaddr[7:5] != 3'b111;
-
-    assign o_ram_cs_n = ram_sel_n | i_memrq_n;
-    assign o_rom_cs_n = rom_sel_n | i_memrq_n;
-
-    // Programmable Wait-State Generator
-    // All of the builtin components should support maximum clock
-    // operation (16Mhz), so the wait state generator only needs
-    // to work with expansion devices. Each device may have up to
-    // 2 wait-states inserted pr cycle. Wait-states may not be
-    // inserted for memory requests, so all memory expansions
-    // should support 16 Mhz Z80 memory cycles (62.5*2=125ns access time)
-    wire wsg_wait;
-
-    z80_waitstate_generator wsg(
-        .i_reset(reset),
-        .i_clk(sys_clk),
-        .i_cs_n(wsg_cs_n),
-        .i_wr_n(i_wr_n),
-        .i_addr(i_addr[1:0]),
-        .i_data(io_data),
-        .o_data(wsg_data_o),
-        .i_iorq_n(i_addr[7] | iorq_n),
-        .i_device(i_addr[6:5]),
-        .o_wait(wsg_wait)
-    );
-
-    assign o_wait_n = wsg_wait ? 1'b0 : 1'bZ;
-
-    // Interrupts
-    assign o_int_n = ~(i_uart_inta | i_uart_intb) ? 1'bZ : 1'b0;
 endmodule
 `endif

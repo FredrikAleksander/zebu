@@ -46,8 +46,8 @@ module config_register(
         assign serclk_speed_bus_out=serclk_speed;
 
         initial begin
-                serclk_polarity <= 0;
-                serclk_speed <= 0;
+                serclk_polarity = 0;
+                serclk_speed = 0;
         end
         
         // Note the FF only gets set if data D5 is low.

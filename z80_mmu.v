@@ -22,10 +22,10 @@ module z80_mmu(
 
    initial
    begin
-       slots[0] <= 8'b11100000;
-       slots[1] <= 8'b11000000;
-       slots[2] <= 8'b11000001;
-       slots[3] <= 8'b11000011;
+       slots[0] = 8'b11100000;
+       slots[1] = 8'b11000000;
+       slots[2] = 8'b11000001;
+       slots[3] = 8'b11000011;
    end
 
    always @(posedge i_clk or posedge i_reset)
