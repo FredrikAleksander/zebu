@@ -3,7 +3,9 @@ db/
 output_files/
 simulation/
 .vscode/
+obj_dir/
 *.bak
 *.vvp
 *.vcd
 *.log
+*.exe

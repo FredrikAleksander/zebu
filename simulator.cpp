@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
 
 		if(romSize > 512*1024) {
 			printf("Warning: ROM binary is larger than ROM memory\n");
+			romSize = 512*1024;
 		}
 
 		romData = reinterpret_cast<char*>(malloc(romSize));
