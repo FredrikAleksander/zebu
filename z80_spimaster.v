@@ -56,8 +56,8 @@ module z80_spimaster(
                                                                                               4'b0111;
 
         initial begin
-                spi_cs_reg <= 0;
-                spi_cs_hold <= 1'b0;
+                spi_cs_reg = 0;
+                spi_cs_hold = 1'b0;
         end
 
         always @(posedge clk or posedge reset)

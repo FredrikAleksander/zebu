@@ -39,7 +39,7 @@ set_time_format -unit ns -decimal_places 3
 #**************************************************************
 
 create_clock -name {z80_spimaster:spimaster|config_register:cfg|serclk_speed[0]} -period 62.500 -waveform { 31.250 62.500 } [get_registers { z80_spimaster:spimaster|config_register:cfg|serclk_speed[0] }]
-create_clock -name {clk2x} -period 62.500 -waveform { 31.250 62.500 } [get_registers { clk2x }]
+create_clock -name {z80_bus_controller_core:core|clk2x} -period 62.500 -waveform { 31.250 62.500 } [get_registers { clk2x }]
 create_clock -name {i_mclk} -period 31.250 -waveform { 15.625 31.250 } [get_ports { i_mclk }]
 
 

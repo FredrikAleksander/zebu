@@ -55,11 +55,11 @@ module shiftreg_out(
          assign valid = vreg & set_enable;
 
          initial begin
-                 data <= 0;
-                 shift_data <= 0;
-                 current_bit <= 0;
-                 vreg <= 0;
-                 sending <= 0;
+                 data = 0;
+                 shift_data = 0;
+                 current_bit = 0;
+                 vreg = 0;
+                 sending = 0;
          end
 
         always @(posedge set_clk or posedge reset or posedge data_done)

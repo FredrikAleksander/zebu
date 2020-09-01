@@ -38,7 +38,7 @@ module shiftreg_in(
          assign inv_serclk=!serclk;
 
          initial begin
-                 shiftreg <= 0;
+                 shiftreg = 0;
          end
          
         always @(posedge inv_serclk or posedge reset)
