@@ -3,7 +3,7 @@ db/
 output_files/
 simulation/
 .vscode/
-obj_dir/
+*/obj_dir/
 *.bak
 *.vvp
 *.vcd

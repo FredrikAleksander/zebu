@@ -1,4 +1,4 @@
-    OUTPUT "rom.bin"
+    OUTPUT "bios.rom"
 
 UART equ 0x80
 UART_RBR: equ UART+0x0
@@ -106,13 +106,6 @@ UART_MCR: equ UART+0x04
     DRV_UARTWR
 
 LOOP:
-    ; Write A character to UART
-    
-
-    ; LD c, (0x80)
-    ; LD a, 'A'
-    ; OUT (c), a
-
     ; Set hold register, Chip Select to device #1, no clock divider
     LD c, 0xA1
     LD a, 0x80
