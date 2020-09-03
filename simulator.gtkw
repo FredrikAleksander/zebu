@@ -1,0 +1,57 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Wed Sep 02 21:11:02 2020
+[*]
+[dumpfile] "simulator.vcd"
+[dumpfile_mtime] "Wed Sep 02 21:10:30 2020"
+[dumpfile_size] 52763390
+[savefile] "simulator.gtkw"
+[timestart] 162410000
+[size] 1920 1057
+[pos] -1 -1
+*-23.000000 107354000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.simulator.
+[sst_width] 197
+[signals_width] 360
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@28
+TOP.simulator.sysclk
+TOP.simulator.reset_n
+TOP.simulator.halt_n
+TOP.simulator.m1_n
+TOP.simulator.int_n
+TOP.simulator.nmi_n
+@22
+TOP.simulator.master_addr[21:0]
+TOP.simulator.master_data_i[7:0]
+TOP.simulator.master_data_o[7:0]
+@28
+TOP.simulator.busrq_n
+TOP.simulator.busack_n
+TOP.simulator.mreq_n
+TOP.simulator.iorq_n
+TOP.simulator.wait_n
+TOP.simulator.rd_n
+TOP.simulator.wr_n
+TOP.simulator.ram_cs_n
+TOP.simulator.rom_cs_n
+@200
+-UART
+@28
+TOP.simulator.uart_cs_n
+TOP.simulator.uart_inta
+TOP.simulator.i_rx
+TOP.simulator.o_tx
+@200
+-SPI
+@42020
+^1 C:\Projects\hal80_cpld\filters\device_select.flt
+TOP.simulator.ssel[3:0]
+@28
+TOP.simulator.sck
+TOP.simulator.mosi
+TOP.simulator.miso
+[pattern_trace] 1
+[pattern_trace] 0

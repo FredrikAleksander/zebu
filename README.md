@@ -90,3 +90,13 @@ I/O Device Map
     +0x01 PAGE1   (R/W)
     +0x02 PAGE2   (R/W)
     +0x03 PAGE3   (R/W)
+
+Simulation
+-------------------------
+
+It is possible to compile a fully functional system simulator using Verilator.
+The simulator can be provided with the filename of a ROM to use and optionally
+the path to a trace file (VCD) that may be used to analyze the signals generated
+under simulation in a tool like GtkWave. I plan on extending this simulator
+more in the future to support UART communication with the host, aswell
+as video output

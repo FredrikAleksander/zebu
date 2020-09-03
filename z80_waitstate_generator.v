@@ -10,8 +10,7 @@ module z80_waitstate_generator(
     input  [7:0] i_data,
     input        i_iorq_n,
     input  [1:0] i_device,
-    //output [7:0] o_data,
-    output       o_wait
+    output       o_wait_n
 );
     reg [1:0] dev_waitstates [0:3];
     wire [1:0] waitstates = dev_waitstates[i_device];
@@ -25,7 +24,7 @@ module z80_waitstate_generator(
 
     //assign o_data = {6'b000000, dev_waitstates[i_addr[1:0]]};
 
-    assign o_wait = i_iorq_n | ~bits[1];
+    assign o_wait_n = i_iorq_n | ~bits[1];
 
     initial begin
         dev_waitstates[0] = 2'b00;

@@ -84,10 +84,10 @@ module z80_bus_controller_core (
     wire [7:0] mmu_uaddr_o;
     wire [7:0] uaddr_i;
 	 
-	 wire [7:0] data_o = (mmu_sel_n ? (spi_sel_n ?  8'b00000000 : spi_data_o) : mmu_data_o);
+    wire [7:0] data_o = (mmu_sel_n ? (spi_sel_n ?  8'b00000000 : spi_data_o) : mmu_data_o);
 	 
-	 assign o_data = data_o;
-	 assign o_data_en = ~(iorq_n | i_rd_n | ~i_addr[7]);
+    assign o_data = data_o;
+    assign o_data_en = ~(iorq_n | i_rd_n | (mmu_sel_n & spi_sel_n));
 
     //assign io_data = (wsg_cs_n | i_rd_n) ? ((mmu_cs_n | i_rd_n) ? ((spi_cs_n | i_rd_n) ? 8'bZZZZZZZZ : spi_data_o) : mmu_data_o) : wsg_data_o;
     wire [7:0] uaddr = i_busack_n ? mmu_uaddr_o : i_uaddr;
@@ -150,7 +150,7 @@ module z80_bus_controller_core (
         .i_data(i_data),
         .i_iorq_n(i_addr[7] | iorq_n),
         .i_device(i_addr[6:5]),
-        .o_wait(o_wait_n)
+        .o_wait_n(o_wait_n)
     );
 
     // Interrupts

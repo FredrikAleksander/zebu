@@ -1,10 +1,17 @@
 `include "tv80s.v"
 `include "z80_bus_controller_core.v"
 `include "sram.v"
+`include "fooart_core.v"
 
 module simulator(
-    input i_reset,
-    input i_clk
+    input        i_reset,
+    input        i_clk,
+    input        i_baudclk,
+    input  [7:0] i_rx,
+    input        i_rx_available,
+    output       o_rx_stb,
+    output [7:0] o_tx,
+    output       o_tx_stb
 );
     wire reset_n = ~i_reset;
 
@@ -23,7 +30,7 @@ module simulator(
     wire nmi_n = 1'b1;
     wire busrq_n = 1'b1;
 
-    wire uart_inta = 1'b0;
+    wire uart_inta;
     wire uart_intb = 1'b0;
     
     wire controller_int_n;
@@ -122,7 +129,7 @@ module simulator(
         .i_cs_n(ram_cs_n),
         .i_wr_n(wr_n),
         .i_addr(master_addr[18:0]),
-        .i_data(ram_data_i),
+        .i_data(master_data_o),
         .o_data(ram_data_o)
     );
 
@@ -131,7 +138,37 @@ module simulator(
         .i_addr(master_addr[18:0]),
         .o_data(rom_data_o)
     );
-    
-    assign master_data_i = controller_data_en ?
-        controller_data : (~(ram_cs_n | rd_n) ? ram_data_o : (~(rom_cs_n | rd_n) ? rom_data_o : 8'bZZZZZZZZ));
+
+    wire [7:0] uart_data_o;
+    wire       aux_rx;
+    wire       aux_tx;
+
+    fooart_core fooart(
+        .i_clk(sysclk),
+        .i_reset(i_reset),
+        .i_cs(~uart_cs_n),
+        .i_addr(master_addr[2:0]),
+        .i_rd(~rd_n),
+        .i_wr(~wr_n),
+        .i_data(master_data_o),
+        .o_data(uart_data_o),
+
+        .i_rx(i_rx),
+        .i_rx_available(i_rx_available),
+        .o_rx_stb(o_rx_stb),
+        .o_tx(o_tx),
+        .o_tx_stb(o_tx_stb),
+        
+        .o_int(uart_inta)
+    );
+
+    assign master_data_i = controller_data_en 
+        ? controller_data 
+        : (~(ram_cs_n | rd_n) 
+            ? ram_data_o 
+            : (~(rom_cs_n | rd_n) 
+                ? rom_data_o 
+                : (~(uart_cs_n | rd_n) 
+                    ? uart_data_o 
+                    : 8'b00000000)));
 endmodule

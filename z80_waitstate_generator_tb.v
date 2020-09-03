@@ -19,8 +19,7 @@ module z80_waitstate_generator_tb;
     wire cs_n = (addr[7:5] != 3'b110) | iorq_n;
     wire wiorq_n = addr[7] | iorq_n;
 
-    wire [7:0] data_output;
-    wire r_wait;
+    wire r_wait_n;
 
     z80_waitstate_generator wsg(
         .i_reset(reset),
@@ -31,8 +30,7 @@ module z80_waitstate_generator_tb;
         .i_wr_n(wr_n),
         .i_addr(addr[1:0]),
         .i_data(data),
-        .o_data(data_output),
-        .o_wait(r_wait)
+        .o_wait_n(r_wait_n)
     );
 
     initial
@@ -88,17 +86,17 @@ module z80_waitstate_generator_tb;
         @(posedge clk);
         cycle <= "W1";
 
-        #0.10 assert (r_wait == 1'b1) else $display("Wait-State missing");
+        #0.10 assert (r_wait_n == 1'b0) else $display("Wait-State missing");
 
         @(posedge clk);
         cycle <= "W2";
 
-        #0.10 assert (r_wait == 1'b1) else $display("Wait-State missing");
+        #0.10 assert (r_wait_n == 1'b0) else $display("Wait-State missing");
 
         @(posedge clk);
         cycle <= "W3";
 
-        #0.10 assert (r_wait == 1'b0) else $display("Wait-States overextended");
+        #0.10 assert (r_wait_n == 1'b1) else $display("Wait-States overextended");
 
         @(posedge clk);
         cycle <= "T3";
