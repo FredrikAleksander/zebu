@@ -39,8 +39,23 @@ module fooart_core(
     reg r_parity_error    = 1'b0;
     reg r_framing_error   = 1'b0;
     reg r_break_interrupt = 1'b0;
-    reg r_thr_empty       = 1'b1;
-    reg r_dlab            = 1'b0;
+    reg r_thr_empty       = 1'b1;    
+
+    reg [1:0] r_nbits     = 2'b11;
+    reg       r_sbits     = 1'b0;
+    reg       r_parity    = 1'b0;
+    reg       r_evenp     = 1'b0;
+    reg       r_stikp     = 1'b0;
+    reg       r_break     = 1'b0;
+    reg       r_dlab      = 1'b0;
+
+    reg       r_lsr_clr   = 1'b0;
+
+    reg [7:0] r_dlm       = 8'h00;
+    reg [7:0] r_dll       = 8'h00;
+
+    wire [15:0] divisor = {r_dlm, r_dll};
+
     wire tx_empty         = r_thr_empty;
 
     wire [7:0] LSR = {1'b0, tx_empty, r_thr_empty, r_break_interrupt, r_framing_error, r_parity_error, r_overrun_error, i_rx_available };
@@ -59,14 +74,17 @@ module fooart_core(
     assign o_rx_stb = i_cs & i_rd & RBR_sel;
     assign o_tx_stb = i_cs & i_wr & THR_sel;
     assign o_tx     = o_tx_stb ? i_data : 8'hFF;
-
     
     assign o_data = ~(i_cs & i_rd) ? 8'h00 :
         (LSR_sel 
             ? LSR 
             : (RBR_sel
                 ? i_rx
-                : 8'h00));
+                : (DLL_sel
+                    ? r_dll
+                    : (DLM_sel
+                        ? r_dlm
+                        : 8'h00))));
     
 
     always @(posedge i_clk or posedge i_reset) begin
@@ -76,7 +94,58 @@ module fooart_core(
             r_framing_error <= 1'b0;
             r_break_interrupt <= 1'b0;
             r_thr_empty <= 1'b1;
-            r_dlab <= 1'b0;
+            r_lsr_clr <= 1'b0;
+
+            r_nbits <= 2'b11;
+            r_sbits <= 1'b0;
+            r_evenp <= 1'b0;
+            r_stikp <= 1'b0;
+            r_break <= 1'b0;
+            r_dlab  <= 1'b0;
+        end
+        else begin
+            if(i_cs & i_rd) begin
+                /* verilator lint_off CASEINCOMPLETE */
+                case(i_addr)
+                
+                3'b101: r_lsr_clr <= 1'b1; // Clear the interrupt bits of the LSR on reading it
+                endcase
+                /* verilator lint_on CASEINCOMPLETE */
+            end
+            else if(i_cs & i_wr) begin
+                /* verilator lint_off CASEINCOMPLETE */
+                case(i_addr)
+                3'b000: if(r_dlab == 1'b1)
+                        begin
+                            r_dll <= i_data;
+                        end
+                3'b001: if(r_dlab == 1'b1)
+                        begin
+                            r_dlm <= i_data;
+                        end
+                3'b011: begin
+                            r_nbits     <= i_data[1:0];
+                            r_sbits     <= i_data[2];
+                            r_parity    <= i_data[3];
+                            r_evenp     <= i_data[4];
+                            r_stikp     <= i_data[5];
+                            r_break     <= i_data[6];
+                            r_dlab      <= i_data[7];
+                        end
+                endcase
+                /* verilator lint_on CASEINCOMPLETE */
+            end
+
+            // Apply read side-effects after read cycle has ended
+            if(~i_rd) begin
+                if(r_lsr_clr) begin
+                    r_overrun_error <= 1'b0;
+                    r_parity_error <= 1'b0;
+                    r_framing_error <= 1'b0;
+                    r_break_interrupt <= 1'b0;
+                    r_lsr_clr <= 1'b0;
+                end
+            end
         end
     end
 endmodule

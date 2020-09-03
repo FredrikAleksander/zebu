@@ -23,6 +23,7 @@ Requirements:
 * Quartus 13.0sp1 (only needed for programming CPLD)
 * Icarus Verilog (for compiling testbenches)
 * GTKWave (for viewing testbench waveform data)
+* Verilator (for compiling the simulator)
 
 Plug and Play
 ---------------------

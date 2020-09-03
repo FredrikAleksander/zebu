@@ -36,6 +36,28 @@ UART_MCR: equ UART+0x04
 
     ENDM
 
+    ; Init UART
+    ; ---------------------------
+    ; Set Line Control Register to use 8 bit data, 1 stop bit, no parity check, and DLAB=1
+    LD a, %10000011
+    OUT (UART_LCR), a
+    NOP
+
+    ; Set least significant byte of Divisor Latch to 12
+    LD a, 0Ch
+    OUT (UART_DLL), a
+    NOP
+    ; And the most significant byte to 0, for a divisor of
+    ; 12, for a speed of 9600 bps
+    LD a, 00h
+    OUT (UART_DLM), a
+    NOP
+    
+    ; Set DLAB bit of Line Control Register to 0
+    LD a, %00000011
+    OUT (UART_LCR), a
+    NOP
+
     LD a, 'W'
     DRV_UARTWR
     LD a, 'e'
