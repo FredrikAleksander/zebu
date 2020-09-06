@@ -1,12 +1,15 @@
 #pragma once
-#ifndef __TB_CLOCK_HPP
-#define __TB_CLOCK_HPP 1
+#ifndef __SIMULATOR_CLOCK_HPP
+#define __SIMULATOR_CLOCK_HPP 1
 
-#include <stdint.h>
 #include <functional>
 
-class tb_clock {
+class simulator_clock {
+    public:
+        using tick_t = std::function<void()>;
     private:
+        std::string m_name;
+
         uint64_t m_increment_ps;
         uint64_t m_now_ps;
         uint64_t m_last_posedge_ps;
@@ -14,8 +17,11 @@ class tb_clock {
 
         std::function<int(void)> getter;
         std::function<void(int)> setter;
+
+        std::vector<tick_t> callbacks;
     public:
-        tb_clock(uint64_t increment_ps, std::function<int(void)> getter, std::function<void(int)> setter) :
+        simulator_clock(const std::string& name, uint64_t increment_ps, std::function<int(void)> getter, std::function<void(int)> setter) :
+            m_name(name),
             m_increment_ps((increment_ps>>1)&-2l),
             m_now_ps(((increment_ps>>1)&-2l)+1),
             m_last_posedge_ps(0),
@@ -23,6 +29,20 @@ class tb_clock {
             getter(getter),
             setter(setter)
         {
+        }
+
+        const std::string& name() const {
+            return m_name;
+        }
+
+        void tick() {
+            for(auto& callback : callbacks) {
+                callback();
+            }
+        }
+
+        void on(tick_t&& tck, bool once = false) {
+            callbacks.emplace_back(std::move(tck));
         }
 
         void set(int signal) {
@@ -91,7 +111,7 @@ class tb_clock {
         }
 };
 
-inline bool operator <(const tb_clock& a, const tb_clock& b) {
+inline bool operator <(const simulator_clock& a, const simulator_clock& b) {
     return a.time_to_edge() < b.time_to_edge();
 }
 
